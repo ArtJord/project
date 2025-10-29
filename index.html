@@ -3,57 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meu Projeto HTML 🚀</title>
+  <title>Relógio Digital ⏰</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      background: linear-gradient(135deg, #0077cc, #00c6ff);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
       text-align: center;
-      padding-top: 100px;
-      transition: background 0.5s;
+      transition: background 0.3s ease;
     }
 
     h1 {
-      color: #0077cc;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    #relogio {
+      font-size: 4rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #data {
+      font-size: 1.3rem;
+      margin-top: 15px;
+      opacity: 0.9;
     }
 
     button {
-      background-color: #0077cc;
-      color: white;
+      margin-top: 30px;
+      background: white;
+      color: #0077cc;
       border: none;
       padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background 0.3s;
+      font-weight: bold;
+      transition: 0.3s;
     }
 
     button:hover {
-      background-color: #005fa3;
-    }
-
-    p#mensagem {
-      margin-top: 20px;
-      font-size: 18px;
+      background: #005fa3;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <h1>Bem-vindo ao meu projeto! 💻</h1>
-  <p id="mensagem">Clique no botão abaixo para mudar o visual!</p>
-  <button onclick="mudarCor()">Mudar Cor 🎨</button>
+  <h1>Relógio Digital em Tempo Real ⏰</h1>
+  <div id="relogio">00:00:00</div>
+  <div id="data"></div>
+
+  <button onclick="mudarTema()">🌙 Alternar Tema</button>
 
   <script>
-    const cores = ['#f2f2f2', '#d1e7dd', '#ffe5b4', '#cce5ff', '#f8d7da', '#e2e3e5'];
-    let index = 0;
+    function atualizarRelogio() {
+      const agora = new Date();
 
-    function mudarCor() {
-      index = (index + 1) % cores.length;
-      document.body.style.background = cores[index];
-      document.getElementById("mensagem").textContent = 
-        "Cor alterada para: " + cores[index];
+      let horas = agora.getHours().toString().padStart(2, '0');
+      let minutos = agora.getMinutes().toString().padStart(2, '0');
+      let segundos = agora.getSeconds().toString().padStart(2, '0');
+
+      document.getElementById('relogio').textContent = `${horas}:${minutos}:${segundos}`;
+
+      const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('data').textContent = agora.toLocaleDateString('pt-BR', opcoes);
     }
+
+    function mudarTema() {
+      const body = document.body;
+      if (body.style.background.includes('#0077cc')) {
+        body.style.background = 'linear-gradient(135deg, #222, #444)';
+      } else {
+        body.style.background = 'linear-gradient(135deg, #0077cc, #00c6ff)';
+      }
+    }
+
+    setInterval(atualizarRelogio, 1000);
+    atualizarRelogio();
   </script>
 </body>
 </html>
