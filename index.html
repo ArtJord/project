@@ -1,331 +1,453 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel do Tempo ⏰</title>
-  <style>
-    :root{
-      --bg1:#0077cc; --bg2:#00c6ff;
-      --fg:#ffffff; --card-bg:rgba(255,255,255,.12); --shadow:rgba(0,0,0,.25);
-      --btn-bg:#ffffff; --btn-fg:#0077cc; --btn-bg-hover:#005fa3; --btn-fg-hover:#fff;
-    }
-    [data-theme="dark"]{
-      --bg1:#1d1f20; --bg2:#444;
-      --fg:#f3f3f3; --card-bg:rgba(255,255,255,.08); --shadow:rgba(0,0,0,.35);
-      --btn-bg:#2b2d2f; --btn-fg:#eaeaea; --btn-bg-hover:#3a3d40; --btn-fg-hover:#fff;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-      flex-direction:column; gap:16px; text-align:center; color:var(--fg);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
-      background:linear-gradient(135deg,var(--bg1),var(--bg2)); transition:background .4s ease;
-      padding:24px;
-    }
-    h1{margin:0; font-size:2rem; letter-spacing:.5px}
-    .grid{
-      width:min(980px,100%); display:grid; gap:16px;
-      grid-template-columns:1fr; 
-    }
-    @media (min-width: 820px){
-      .grid{grid-template-columns: 1fr 1fr;}
-      .wide{grid-column: 1 / -1;}
-    }
-    .card{
-      background:var(--card-bg); border-radius:16px; padding:20px;
-      box-shadow:0 10px 24px var(--shadow); backdrop-filter: blur(6px);
-    }
-    #relogio{font-size:4rem; font-weight:800; letter-spacing:2px}
-    #data{opacity:.95; font-size:1.1rem; margin-top:8px}
-    .row{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:16px}
-    button, .switch{
-      border:none; cursor:pointer; border-radius:12px; padding:10px 16px; font-weight:700;
-      background:var(--btn-bg); color:var(--btn-fg); transition:.25s; user-select:none;
-    }
-    button:hover, .switch:hover{background:var(--btn-bg-hover); color:var(--btn-fg-hover)}
-    .switch{display:inline-flex; align-items:center; gap:8px}
-    input[type="number"], input[type="text"]{
-      padding:10px 12px; border-radius:10px; border:1px solid transparent; outline:none;
-      background:var(--card-bg); color:var(--fg); min-width:120px;
-    }
-    .label{opacity:.9; font-size:.95rem}
-    .muted{opacity:.8}
-    .kpi{display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap}
-    .kpi .pill{
-      background:var(--card-bg); padding:8px 12px; border-radius:999px; font-weight:600
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Painel do Tempo ⏰ — Turbo</title>
+<style>
+  :root{
+    --bg1:#0077cc; --bg2:#00c6ff;
+    --fg:#ffffff; --card-bg:rgba(255,255,255,.12); --shadow:rgba(0,0,0,.25);
+    --btn-bg:#ffffff; --btn-fg:#0077cc; --btn-bg-hover:#005fa3; --btn-fg-hover:#fff;
+  }
+  [data-theme="dark"]{
+    --bg1:#1d1f20; --bg2:#444;
+    --fg:#f3f3f3; --card-bg:rgba(255,255,255,.08); --shadow:rgba(0,0,0,.35);
+    --btn-bg:#2b2d2f; --btn-fg:#eaeaea; --btn-bg-hover:#3a3d40; --btn-fg-hover:#fff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; display:flex; align-items:center; justify-content:flex-start;
+    flex-direction:column; gap:16px; text-align:center; color:var(--fg);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2)); transition:background .4s ease;
+    padding:24px;
+  }
+  h1{margin:0; font-size:2rem; letter-spacing:.5px}
+  .grid{
+    width:min(1100px,100%); display:grid; gap:16px; grid-template-columns:1fr;
+  }
+  @media (min-width: 900px){ .grid{ grid-template-columns: repeat(3, 1fr);} .wide{grid-column: 1 / -1;} }
+  .card{
+    background:var(--card-bg); border-radius:16px; padding:18px;
+    box-shadow:0 10px 24px var(--shadow); backdrop-filter: blur(6px);
+  }
+  #relogio{font-size:3.6rem; font-weight:800; letter-spacing:2px}
+  #data{opacity:.95; font-size:1.1rem; margin-top:8px}
+  .row{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:12px}
+  button,.switch{
+    border:none; cursor:pointer; border-radius:12px; padding:10px 16px; font-weight:700;
+    background:var(--btn-bg); color:var(--btn-fg); transition:.25s; user-select:none;
+  }
+  button:hover,.switch:hover{background:var(--btn-bg-hover); color:var(--btn-fg-hover)}
+  input, textarea, select{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid transparent; outline:none;
+    background:var(--card-bg); color:var(--fg);
+  }
+  textarea{min-height:120px; resize:vertical}
+  .muted{opacity:.8}
+  .kpi{display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap}
+  .pill{background:var(--card-bg); padding:6px 10px; border-radius:999px; font-weight:600}
+  .mini-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .mini{background:var(--card-bg); border-radius:12px; padding:10px}
+  .title{font-weight:800; font-size:1.1rem}
+  .time{font-size:1.35rem; font-weight:800}
+  .small{font-size:.9rem}
+  .spacer{height:6px}
+  .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; background:var(--card-bg); padding:2px 6px; border-radius:6px}
+</style>
 </head>
 <body>
-  <h1>Painel do Tempo ⏰</h1>
+  <h1>Painel do Tempo ⏰ — Turbo</h1>
 
-  <!-- Relógio + Data -->
+  <!-- Relógio principal -->
   <section class="card wide">
     <div id="relogio">00:00:00</div>
     <div id="data">—</div>
     <div class="row">
-      <button id="btnTema">🌙 Alternar Tema</button>
-      <label class="switch">
-        <input type="checkbox" id="chkAutoTema" /> Tema automático
-      </label>
-      <label class="switch">
-        <input type="checkbox" id="chk12h" /> Formato 12h
-      </label>
-      <button id="btnCopiar">📋 Copiar hora</button>
+      <button id="btnTema" title="T">🌙 Alternar Tema</button>
+      <label class="switch"><input type="checkbox" id="chkAutoTema" /> Tema automático</label>
+      <label class="switch"><input type="checkbox" id="chk12h" /> Formato 12h</label>
+      <button id="btnCopiar" title="C">📋 Copiar hora</button>
+      <button id="btnFull" title="F">⛶ Tela cheia</button>
     </div>
-    <div class="kpi" style="margin-top:12px">
+    <div class="kpi" style="margin-top:10px">
       <span class="pill" id="saudacao">Olá! 👋</span>
       <span class="pill" id="semana">Semana —</span>
-      <span class="pill" id="fuso">Fuso: <span id="tz"></span></span>
+      <span class="pill">Fuso: <span id="tz"></span></span>
     </div>
   </section>
 
   <section class="grid">
     <!-- Cronômetro -->
     <div class="card">
-      <h2>Cronômetro ⏱️</h2>
-      <div id="cronometro" class="label" style="font-size:2rem; font-weight:800; margin:10px 0">00:00.00</div>
+      <div class="title">Cronômetro ⏱️</div>
+      <div id="cronometro" style="font-size:2rem; font-weight:800; margin:10px 0">00:00.00</div>
       <div class="row">
-        <button id="startStop">Iniciar</button>
-        <button id="lap" disabled>Volta</button>
-        <button id="reset" disabled>Resetar</button>
+        <button id="startStop" title="Espaço">Iniciar</button>
+        <button id="lap" disabled title="L">Volta</button>
+        <button id="reset" disabled title="R">Resetar</button>
       </div>
-      <div id="voltas" class="label muted" style="margin-top:10px; max-height:140px; overflow:auto; text-align:left"></div>
+      <div id="voltas" class="muted small" style="margin-top:8px; max-height:120px; overflow:auto; text-align:left"></div>
     </div>
 
     <!-- Timer -->
     <div class="card">
-      <h2>Timer ⏳</h2>
+      <div class="title">Timer ⏳</div>
       <div class="row">
-        <input id="minutos" type="number" min="0" placeholder="Minutos" />
-        <input id="segundos" type="number" min="0" max="59" placeholder="Segundos" />
+        <input id="minutos" type="number" min="0" placeholder="Minutos" style="max-width:140px"/>
+        <input id="segundos" type="number" min="0" max="59" placeholder="Segundos" style="max-width:140px"/>
       </div>
-      <div id="mostraTimer" class="label" style="font-size:2rem; font-weight:800; margin:10px 0">00:00</div>
+      <div id="mostraTimer" style="font-size:2rem; font-weight:800; margin:10px 0">00:00</div>
       <div class="row">
         <button id="timerStart">Começar</button>
         <button id="timerPause" disabled>Pausar</button>
         <button id="timerReset" disabled>Resetar</button>
       </div>
-      <p class="muted" style="margin-top:8px">Dica: deixe 0m 10s para testar o alerta 🔔</p>
+      <p class="muted small">Dica: teste com 0m 10s 🔔</p>
+    </div>
+
+    <!-- Pomodoro -->
+    <div class="card">
+      <div class="title">Pomodoro 🍅</div>
+      <div class="row">
+        <input id="pomFocus" type="number" min="1" value="25" style="max-width:120px" />
+        <input id="pomBreak" type="number" min="1" value="5" style="max-width:120px" />
+        <select id="pomState" style="max-width:160px">
+          <option value="focus">Foco</option>
+          <option value="break">Pausa</option>
+        </select>
+      </div>
+      <div id="pomDisplay" style="font-size:2rem; font-weight:800; margin:10px 0">25:00</div>
+      <div class="row">
+        <button id="pomStart">Iniciar</button>
+        <button id="pomPause" disabled>Pausar</button>
+        <button id="pomReset" disabled>Resetar</button>
+      </div>
+      <div class="spacer"></div>
+      <div class="muted small">Sessões concluídas: <span id="pomSessions">0</span></div>
+    </div>
+
+    <!-- Relógios do mundo -->
+    <div class="card">
+      <div class="title">Relógios do Mundo 🌍</div>
+      <div class="mini-grid" id="worldClocks"></div>
+      <p class="muted small" style="margin-top:8px">Atualiza a cada segundo.</p>
+    </div>
+
+    <!-- Notas -->
+    <div class="card">
+      <div class="title">Bloco de Notas 📝</div>
+      <textarea id="notepad" placeholder="Escreva algo aqui... (salva automaticamente)"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button id="clearNotes">Limpar notas</button>
+        <span class="muted small" id="noteSaved">—</span>
+      </div>
+    </div>
+
+    <!-- Diferença de datas -->
+    <div class="card">
+      <div class="title">Diferença de Datas 📅</div>
+      <div class="row">
+        <input type="date" id="d1" />
+        <input type="date" id="d2" />
+      </div>
+      <div id="diffOut" style="margin-top:10px; font-weight:700">—</div>
+      <button style="margin-top:8px" id="calcDiff">Calcular</button>
+      <p class="muted small">Resultado em dias, horas e minutos.</p>
+    </div>
+
+    <!-- Dicas/Atalhos -->
+    <div class="card">
+      <div class="title">Atalhos de Teclado ⌨️</div>
+      <ul class="small" style="text-align:left; margin:8px 0 0 16px">
+        <li><span class="kbd">Espaço</span> — Iniciar/Pausar cronômetro</li>
+        <li><span class="kbd">L</span> — Marcar volta</li>
+        <li><span class="kbd">R</span> — Resetar cronômetro</li>
+        <li><span class="kbd">T</span> — Alternar tema</li>
+        <li><span class="kbd">C</span> — Copiar hora atual</li>
+        <li><span class="kbd">F</span> — Tela cheia</li>
+      </ul>
+    </div>
+
+    <!-- Frase aleatória -->
+    <div class="card">
+      <div class="title">Frase do Momento ✨</div>
+      <div id="quote" style="margin-top:8px; font-size:1.05rem">Carregando…</div>
+      <button style="margin-top:10px" id="newQuote">Trocar frase</button>
     </div>
   </section>
 
-  <script>
-    // ===== Preferências (localStorage) =====
-    const store = {
-      get(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback }catch{ return fallback } },
-      set(key, val){ localStorage.setItem(key, JSON.stringify(val)) }
-    };
+<script>
+  // ===== util/localStorage =====
+  const store = {
+    get(k, f){ try{return JSON.parse(localStorage.getItem(k)) ?? f}catch{return f} },
+    set(k, v){ localStorage.setItem(k, JSON.stringify(v)) }
+  };
+  const two = n => n.toString().padStart(2,'0');
 
-    // ===== Relógio & Data =====
-    const elRelogio = document.getElementById('relogio');
-    const elData = document.getElementById('data');
-    const elSaudacao = document.getElementById('saudacao');
-    const elSemana = document.getElementById('semana');
-    const elTZ = document.getElementById('tz');
+  // ===== tema & formato =====
+  const chk12h = document.getElementById('chk12h');
+  const chkAutoTema = document.getElementById('chkAutoTema');
+  const btnTema = document.getElementById('btnTema');
+  const btnCopiar = document.getElementById('btnCopiar');
+  const btnFull = document.getElementById('btnFull');
 
-    const chk12h = document.getElementById('chk12h');
-    const chkAutoTema = document.getElementById('chkAutoTema');
-    const btnTema = document.getElementById('btnTema');
-    const btnCopiar = document.getElementById('btnCopiar');
+  document.documentElement.setAttribute('data-theme', store.get('theme','light'));
+  chk12h.checked = store.get('fmt12h', false);
+  chkAutoTema.checked = store.get('autoTheme', true);
 
-    // estado inicial
-    document.documentElement.setAttribute('data-theme', store.get('theme','light'));
-    chk12h.checked = store.get('fmt12h', false);
-    chkAutoTema.checked = store.get('autoTheme', true);
+  function setTheme(theme){ document.documentElement.setAttribute('data-theme', theme); store.set('theme', theme); }
+  function autoTheme(){
+    if(!chkAutoTema.checked) return;
+    const h = new Date().getHours();
+    setTheme((h<6 || h>=18) ? 'dark' : 'light');
+  }
 
-    function setTheme(theme){
-      document.documentElement.setAttribute('data-theme', theme);
-      store.set('theme', theme);
+  btnTema.onclick = () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    setTheme(cur === 'dark' ? 'light' : 'dark');
+  };
+  chk12h.onchange = () => store.set('fmt12h', chk12h.checked);
+  chkAutoTema.onchange = () => store.set('autoTheme', chkAutoTema.checked);
+
+  // ===== relógio principal =====
+  const elRelogio = document.getElementById('relogio');
+  const elData = document.getElementById('data');
+  const elSaudacao = document.getElementById('saudacao');
+  const elSemana = document.getElementById('semana');
+  const elTZ = document.getElementById('tz');
+
+  function formatClock(d){
+    let h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+    if(chk12h.checked){
+      const ampm = h>=12 ? 'PM':'AM';
+      h = h%12 || 12;
+      return `${two(h)}:${two(m)}:${two(s)} ${ampm}`;
     }
+    return `${two(h)}:${two(m)}:${two(s)}`;
+  }
+  function weekNumber(d){
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const dayNum = date.getUTCDay() || 7;
+    date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+    return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  }
+  function atualizarRelogio(){
+    const now = new Date();
+    elRelogio.textContent = formatClock(now);
+    elData.textContent = now.toLocaleDateString('pt-BR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    elSaudacao.textContent = now.getHours() < 12 ? 'Bom dia ☀️' : (now.getHours()<18 ? 'Boa tarde 🌤️' : 'Boa noite 🌙');
+    elSemana.textContent = `Semana ${weekNumber(now)} 📅`;
+    elTZ.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    autoTheme();
+  }
+  setInterval(atualizarRelogio, 1000);
+  atualizarRelogio();
 
-    function autoTheme(){
-      if(!chkAutoTema.checked) return;
-      const h = new Date().getHours();
-      const isDark = (h < 6 || h >= 18);
-      setTheme(isDark ? 'dark' : 'light');
-    }
+  btnCopiar.onclick = async () => {
+    try{
+      await navigator.clipboard.writeText(elRelogio.textContent);
+      btnCopiar.textContent = '✅ Copiado!'; setTimeout(()=>btnCopiar.textContent='📋 Copiar hora', 900);
+    }catch{ alert('Não foi possível copiar.'); }
+  };
+  btnFull.onclick = () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  };
 
-    function two(n){ return n.toString().padStart(2,'0') }
+  // ===== atalhos teclado =====
+  window.addEventListener('keydown', (e)=>{
+    if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+    if(e.code==='Space'){ e.preventDefault(); document.getElementById('startStop').click(); }
+    if(e.key.toLowerCase()==='l'){ document.getElementById('lap').click(); }
+    if(e.key.toLowerCase()==='r'){ document.getElementById('reset').click(); }
+    if(e.key.toLowerCase()==='t'){ btnTema.click(); }
+    if(e.key.toLowerCase()==='c'){ btnCopiar.click(); }
+    if(e.key.toLowerCase()==='f'){ btnFull.click(); }
+  });
 
-    function formatClock(d){
-      let h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
-      if(chk12h.checked){
-        const ampm = h >= 12 ? 'PM' : 'AM';
-        h = h % 12 || 12;
-        return `${two(h)}:${two(m)}:${two(s)} ${ampm}`;
-      }
-      return `${two(h)}:${two(m)}:${two(s)}`;
-    }
+  // ===== cronômetro =====
+  const elCron = document.getElementById('cronometro');
+  const elVoltas = document.getElementById('voltas');
+  const btnStartStop = document.getElementById('startStop');
+  const btnLap = document.getElementById('lap');
+  const btnReset = document.getElementById('reset');
+  let cronRunning=false, cronStart=0, cronElapsed=0, cronInt=null, voltaCount=0;
 
-    function weekNumber(d){
-      // número da semana ISO
-      const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      const dayNum = date.getUTCDay() || 7;
-      date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-      const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
-      const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
-      return weekNo;
-    }
-
-    function atualizarRelogio(){
-      const now = new Date();
-      elRelogio.textContent = formatClock(now);
-      const opcoes = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
-      elData.textContent = now.toLocaleDateString('pt-BR', opcoes);
-
-      const h = now.getHours();
-      elSaudacao.textContent = h < 12 ? 'Bom dia ☀️' : (h < 18 ? 'Boa tarde 🌤️' : 'Boa noite 🌙');
-
-      elSemana.textContent = `Semana ${weekNumber(now)} 📅`;
-      elTZ.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-      autoTheme();
-    }
-
-    btnTema.onclick = () => {
-      const cur = document.documentElement.getAttribute('data-theme');
-      setTheme(cur === 'dark' ? 'light' : 'dark');
-    };
-    chk12h.onchange = () => store.set('fmt12h', chk12h.checked);
-    chkAutoTema.onchange = () => store.set('autoTheme', chkAutoTema.checked);
-
-    btnCopiar.onclick = async () => {
-      try{
-        await navigator.clipboard.writeText(elRelogio.textContent);
-        btnCopiar.textContent = '✅ Copiado!';
-        setTimeout(()=> btnCopiar.textContent='📋 Copiar hora', 1000);
-      }catch{
-        alert('Não foi possível copiar.'); 
-      }
-    };
-
-    setInterval(atualizarRelogio, 1000);
-    atualizarRelogio();
-
-    // ===== Cronômetro =====
-    const elCron = document.getElementById('cronometro');
-    const elVoltas = document.getElementById('voltas');
-    const btnStartStop = document.getElementById('startStop');
-    const btnLap = document.getElementById('lap');
-    const btnReset = document.getElementById('reset');
-
-    let cronRunning = false, cronStart = 0, cronElapsed = 0, cronInt = null, voltaCount = 0;
-
-    function renderCron(ms){
-      const cs = Math.floor((ms % 1000) / 10);
-      const s = Math.floor(ms / 1000) % 60;
-      const m = Math.floor(ms / 60000);
-      elCron.textContent = `${two(m)}:${two(s)}.${two(cs)}`;
-    }
-
-    function tickCron(){
-      renderCron(cronElapsed + (Date.now() - cronStart));
-    }
-
-    btnStartStop.onclick = () => {
-      if(!cronRunning){
-        cronRunning = true;
-        cronStart = Date.now();
-        cronInt = setInterval(tickCron, 20);
-        btnStartStop.textContent = 'Pausar';
-        btnLap.disabled = false;
-        btnReset.disabled = false;
-      }else{
-        cronRunning = false;
-        clearInterval(cronInt);
-        cronElapsed += Date.now() - cronStart;
-        btnStartStop.textContent = 'Retomar';
-      }
-    };
-
-    btnLap.onclick = () => {
-      const ms = cronRunning ? (cronElapsed + (Date.now() - cronStart)) : cronElapsed;
-      voltaCount++;
-      const div = document.createElement('div');
-      div.textContent = `Volta ${voltaCount}: ${elCron.textContent}`;
-      elVoltas.prepend(div);
-    };
-
-    btnReset.onclick = () => {
+  function renderCron(ms){
+    const cs = Math.floor((ms % 1000) / 10);
+    const s = Math.floor(ms/1000) % 60;
+    const m = Math.floor(ms/60000);
+    elCron.textContent = `${two(m)}:${two(s)}.${two(cs)}`;
+  }
+  function tickCron(){ renderCron(cronElapsed + (Date.now() - cronStart)); }
+  btnStartStop.onclick = () => {
+    if(!cronRunning){
+      cronRunning = true; cronStart = Date.now();
+      cronInt = setInterval(tickCron, 20);
+      btnStartStop.textContent = 'Pausar';
+      btnLap.disabled = false; btnReset.disabled = false;
+    }else{
       cronRunning = false; clearInterval(cronInt);
-      cronElapsed = 0; voltaCount = 0; elVoltas.innerHTML='';
-      renderCron(0);
-      btnStartStop.textContent = 'Iniciar';
-      btnLap.disabled = true; btnReset.disabled = true;
-    };
-
-    renderCron(0);
-
-    // ===== Timer =====
-    const inMin = document.getElementById('minutos');
-    const inSeg = document.getElementById('segundos');
-    const elMostraTimer = document.getElementById('mostraTimer');
-    const tStart = document.getElementById('timerStart');
-    const tPause = document.getElementById('timerPause');
-    const tReset = document.getElementById('timerReset');
-
-    let tTotal = 0, tRestante = 0, tInt = null, tRodando = false;
-
-    function renderTimer(sec){
-      sec = Math.max(0, Math.floor(sec));
-      const m = Math.floor(sec / 60), s = sec % 60;
-      elMostraTimer.textContent = `${two(m)}:${two(s)}`;
+      cronElapsed += Date.now() - cronStart;
+      btnStartStop.textContent = 'Retomar';
     }
+  };
+  btnLap.onclick = () => {
+    const ms = cronRunning ? (cronElapsed + (Date.now()-cronStart)) : cronElapsed;
+    voltaCount++;
+    const div = document.createElement('div');
+    div.textContent = `Volta ${voltaCount}: ${elCron.textContent}`;
+    elVoltas.prepend(div);
+  };
+  btnReset.onclick = () => {
+    cronRunning=false; clearInterval(cronInt);
+    cronElapsed=0; voltaCount=0; elVoltas.innerHTML=''; renderCron(0);
+    btnStartStop.textContent='Iniciar'; btnLap.disabled=true; btnReset.disabled=true;
+  };
+  renderCron(0);
 
-    function terminarTimer(){
-      clearInterval(tInt); tRodando = false;
-      renderTimer(0);
-      tPause.disabled = true;
-      // toque simples usando Web Audio
-      try{
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const o = ctx.createOscillator(); const g = ctx.createGain();
-        o.type='sine'; o.frequency.value=880; o.connect(g); g.connect(ctx.destination);
-        g.gain.setValueAtTime(0.001, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime+0.01);
-        o.start();
-        setTimeout(()=>{ g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.25); o.stop(ctx.currentTime+0.3); }, 250);
-      }catch{}
-      alert('⏳ Tempo encerrado!');
-    }
+  // ===== timer =====
+  const inMin = document.getElementById('minutos');
+  const inSeg = document.getElementById('segundos');
+  const elMostraTimer = document.getElementById('mostraTimer');
+  const tStart = document.getElementById('timerStart');
+  const tPause = document.getElementById('timerPause');
+  const tReset = document.getElementById('timerReset');
+  let tTotal=0, tRestante=0, tInt=null, tRodando=false;
 
-    function tickTimer(){
-      tRestante -= 1;
-      renderTimer(tRestante);
-      if(tRestante <= 0) terminarTimer();
-    }
-
-    tStart.onclick = () => {
-      if(!tRodando){
-        // se nunca configurado, pega dos inputs
-        if(tRestante <= 0){
-          const m = Math.max(0, parseInt(inMin.value||'0',10));
-          const s = Math.max(0, parseInt(inSeg.value||'0',10));
-          tTotal = m*60 + s;
-          tRestante = tTotal;
-          if(tTotal === 0){ alert('Defina um tempo primeiro 🙂'); return; }
-          renderTimer(tRestante);
-        }
-        tRodando = true;
-        tInt = setInterval(tickTimer, 1000);
-        tPause.disabled = false; tReset.disabled = false;
+  function renderTimer(sec){
+    sec = Math.max(0, Math.floor(sec));
+    const m = Math.floor(sec/60), s = sec%60;
+    elMostraTimer.textContent = `${two(m)}:${two(s)}`;
+  }
+  function beep(){
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type='sine'; o.frequency.value=880; o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime+0.01);
+      o.start(); setTimeout(()=>{ g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.25); o.stop(ctx.currentTime+0.3); }, 250);
+    }catch{}
+  }
+  function finishTimer(){ clearInterval(tInt); tRodando=false; renderTimer(0); tPause.disabled=true; beep(); alert('⏳ Tempo encerrado!'); }
+  function tickTimer(){ tRestante -= 1; renderTimer(tRestante); if(tRestante<=0) finishTimer(); }
+  tStart.onclick = () => {
+    if(!tRodando){
+      if(tRestante<=0){
+        const m = Math.max(0, parseInt(inMin.value||'0',10));
+        const s = Math.max(0, parseInt(inSeg.value||'0',10));
+        tTotal = m*60 + s; tRestante = tTotal;
+        if(tTotal===0){ alert('Defina um tempo 🙂'); return; }
+        renderTimer(tRestante);
       }
-    };
+      tRodando=true; tInt=setInterval(tickTimer,1000);
+      tPause.disabled=false; tReset.disabled=false;
+    }
+  };
+  tPause.onclick = () => { if(tRodando){ clearInterval(tInt); tRodando=false; } else if(tRestante>0){ tRodando=true; tInt=setInterval(tickTimer,1000); } };
+  tReset.onclick = () => { clearInterval(tInt); tRodando=false; tRestante=0; tTotal=0; renderTimer(0); tPause.disabled=true; tReset.disabled=true; };
+  renderTimer(0);
 
-    tPause.onclick = () => {
-      if(tRodando){ clearInterval(tInt); tRodando = false; }
-      else if(tRestante > 0){ tRodando = true; tInt = setInterval(tickTimer, 1000); }
-    };
+  // ===== pomodoro =====
+  const pomFocus = document.getElementById('pomFocus');
+  const pomBreak = document.getElementById('pomBreak');
+  const pomState = document.getElementById('pomState');
+  const pomDisplay = document.getElementById('pomDisplay');
+  const pomStart = document.getElementById('pomStart');
+  const pomPause = document.getElementById('pomPause');
+  const pomReset = document.getElementById('pomReset');
+  const pomSessions = document.getElementById('pomSessions');
 
-    tReset.onclick = () => {
-      clearInterval(tInt); tRodando = false;
-      tRestante = 0; tTotal = 0; renderTimer(0);
-      tPause.disabled = true; tReset.disabled = true;
-    };
+  let pRest=0, pInt=null, pRun=false, pSessions=store.get('pomSessions',0);
+  pomSessions.textContent = pSessions;
 
-    renderTimer(0);
-  </script>
+  function setPomodoroTime(){
+    const mins = (pomState.value==='focus') ? Number(pomFocus.value||25) : Number(pomBreak.value||5);
+    pRest = Math.max(1, mins)*60;
+    renderPom();
+  }
+  function renderPom(){
+    const m=Math.floor(pRest/60), s=pRest%60;
+    pomDisplay.textContent = `${two(m)}:${two(s)}`;
+  }
+  function tickPom(){
+    pRest--; renderPom();
+    if(pRest<=0){
+      beep();
+      if(pomState.value==='focus'){ pSessions++; store.set('pomSessions', pSessions); pomSessions.textContent=pSessions; pomState.value='break'; }
+      else { pomState.value='focus'; }
+      setPomodoroTime();
+    }
+  }
+  pomStart.onclick=()=>{ if(!pRun){ if(pRest<=0) setPomodoroTime(); pRun=true; pInt=setInterval(tickPom,1000); pomPause.disabled=false; pomReset.disabled=false; } };
+  pomPause.onclick=()=>{ if(pRun){ clearInterval(pInt); pRun=false; } else if(pRest>0){ pRun=true; pInt=setInterval(tickPom,1000); } };
+  pomReset.onclick=()=>{ clearInterval(pInt); pRun=false; pRest=0; renderPom(); pomPause.disabled=true; pomReset.disabled=true; };
+  pomState.onchange=setPomodoroTime; pomFocus.oninput=setPomodoroTime; pomBreak.oninput=setPomodoroTime; setPomodoroTime();
+
+  // ===== world clocks =====
+  const world = [
+    {name:'Campo Grande', tz:'America/Campo_Grande'},
+    {name:'São Paulo', tz:'America/Sao_Paulo'},
+    {name:'UTC', tz:'UTC'},
+    {name:'Nova Iorque', tz:'America/New_York'},
+    {name:'Londres', tz:'Europe/London'},
+    {name:'Tóquio', tz:'Asia/Tokyo'},
+  ];
+  const wc = document.getElementById('worldClocks');
+  world.forEach(({name,tz})=>{
+    const box=document.createElement('div'); box.className='mini';
+    box.innerHTML = `<div class="small muted">${tz}</div><div class="time" data-tz="${tz}">--:--:--</div><div class="small">${name}</div>`;
+    wc.appendChild(box);
+  });
+  function updateWorld(){
+    const now=new Date();
+    document.querySelectorAll('[data-tz]').forEach(el=>{
+      const tz=el.getAttribute('data-tz');
+      const s= now.toLocaleTimeString('pt-BR',{timeZone:tz, hour12:chk12h.checked});
+      el.textContent=s;
+    });
+  }
+  setInterval(updateWorld,1000); updateWorld();
+
+  // ===== bloco de notas =====
+  const notes = document.getElementById('notepad');
+  const noteSaved = document.getElementById('noteSaved');
+  notes.value = store.get('notes','');
+  function markSaved(){ noteSaved.textContent = '✅ salvo'; setTimeout(()=>noteSaved.textContent='—', 1000); }
+  notes.addEventListener('input', ()=>{ store.set('notes', notes.value); markSaved(); });
+  document.getElementById('clearNotes').onclick = ()=>{ if(confirm('Limpar notas?')){ notes.value=''; store.set('notes',''); markSaved(); } };
+
+  // ===== diferença de datas =====
+  function diffDates(a,b){
+    const ms = Math.abs(b-a);
+    const min = Math.floor(ms/60000);
+    const horas = Math.floor(min/60);
+    const dias = Math.floor(horas/24);
+    return {dias, horas, min};
+  }
+  document.getElementById('calcDiff').onclick = ()=>{
+    const d1=document.getElementById('d1').value;
+    const d2=document.getElementById('d2').value;
+    if(!d1 || !d2){ alert('Selecione as duas datas.'); return; }
+    const {dias, horas, min} = diffDates(new Date(d1), new Date(d2));
+    document.getElementById('diffOut').textContent = `${dias} dias | ${horas} horas | ${min} minutos`;
+  };
+
+  // ===== frases =====
+  const quotes = [
+    "Feito é melhor que perfeito.",
+    "Pequenos passos diários constroem grandes resultados.",
+    "Disciplina vence motivação.",
+    "O melhor momento para começar foi ontem. O segundo melhor é agora.",
+    "Foco no processo, não no resultado."
+  ];
+  const quoteEl = document.getElementById('quote');
+  function newQuote(){ quoteEl.textContent = quotes[Math.floor(Math.random()*quotes.length)]; }
+  document.getElementById('newQuote').onclick = newQuote; newQuote();
+</script>
 </body>
 </html>
