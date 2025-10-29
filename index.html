@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Painel do Tempo ⏰ — Turbo</title>
+<title>Painel do Tempo ⏰ — Cartório Turbo</title>
 <style>
   :root{
     --bg1:#0077cc; --bg2:#00c6ff;
@@ -24,10 +24,8 @@
     padding:24px;
   }
   h1{margin:0; font-size:2rem; letter-spacing:.5px}
-  .grid{
-    width:min(1100px,100%); display:grid; gap:16px; grid-template-columns:1fr;
-  }
-  @media (min-width: 900px){ .grid{ grid-template-columns: repeat(3, 1fr);} .wide{grid-column: 1 / -1;} }
+  .grid{ width:min(1200px,100%); display:grid; gap:16px; grid-template-columns:1fr; }
+  @media (min-width: 1000px){ .grid{ grid-template-columns: repeat(3, 1fr);} .wide{grid-column: 1 / -1;} }
   .card{
     background:var(--card-bg); border-radius:16px; padding:18px;
     box-shadow:0 10px 24px var(--shadow); backdrop-filter: blur(6px);
@@ -46,19 +44,20 @@
   }
   textarea{min-height:120px; resize:vertical}
   .muted{opacity:.8}
-  .kpi{display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap}
-  .pill{background:var(--card-bg); padding:6px 10px; border-radius:999px; font-weight:600}
+  .title{font-weight:800; font-size:1.1rem; text-align:left}
   .mini-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
   .mini{background:var(--card-bg); border-radius:12px; padding:10px}
-  .title{font-weight:800; font-size:1.1rem}
   .time{font-size:1.35rem; font-weight:800}
   .small{font-size:.9rem}
-  .spacer{height:6px}
+  .pill{background:var(--card-bg); padding:6px 10px; border-radius:999px; font-weight:600}
+  .kpi{display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap}
   .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; background:var(--card-bg); padding:2px 6px; border-radius:6px}
+  .col-2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .right{ text-align:right }
 </style>
 </head>
 <body>
-  <h1>Painel do Tempo ⏰ — Turbo</h1>
+  <h1>Painel do Tempo ⏰ — Cartório Turbo</h1>
 
   <!-- Relógio principal -->
   <section class="card wide">
@@ -124,7 +123,6 @@
         <button id="pomPause" disabled>Pausar</button>
         <button id="pomReset" disabled>Resetar</button>
       </div>
-      <div class="spacer"></div>
       <div class="muted small">Sessões concluídas: <span id="pomSessions">0</span></div>
     </div>
 
@@ -176,6 +174,90 @@
       <div id="quote" style="margin-top:8px; font-size:1.05rem">Carregando…</div>
       <button style="margin-top:10px" id="newQuote">Trocar frase</button>
     </div>
+
+    <!-- ===================== FERRAMENTAS DE CARTÓRIO ===================== -->
+    <div class="card wide">
+      <div class="title">Ferramentas de Cartório 🏛️</div>
+
+      <!-- Linha 1: Extenso + CPF/CNPJ -->
+      <div class="col-2" style="margin-top:10px">
+        <div>
+          <div class="small right muted">Valor por extenso (R$)</div>
+          <input id="extensoValor" type="text" placeholder="Ex.: 4.637,13" />
+          <div class="row">
+            <button id="btnExtenso">Converter</button>
+            <button id="btnCopyExtenso">Copiar</button>
+          </div>
+          <textarea id="extensoSaida" placeholder="Resultado por extenso..." readonly></textarea>
+        </div>
+        <div>
+          <div class="small right muted">CPF/CNPJ — validar e formatar</div>
+          <input id="docNumero" type="text" placeholder="CPF ou CNPJ (só números ou misto)" />
+          <div class="row">
+            <button id="btnValidarDoc">Validar</button>
+            <button id="btnMaskDoc">Formatar</button>
+            <button id="btnCopyDoc">Copiar</button>
+          </div>
+          <textarea id="docSaida" placeholder="Resultado da validação..." readonly></textarea>
+        </div>
+      </div>
+
+      <!-- Linha 2: Qualificação rápida -->
+      <div style="margin-top:12px">
+        <div class="small right muted">Gerador de Qualificação</div>
+        <div class="col-2">
+          <input id="qNome" placeholder="Nome completo" />
+          <input id="qCNH" placeholder="CNH n° (opcional)" />
+          <input id="qRG" placeholder="RG n° + Órgão/UF (ex.: 1393735-SEJUSP/MS)" />
+          <input id="qCPF" placeholder="CPF (só números)" />
+          <input id="qEndereco" placeholder="Endereço (rua, nº, bairro)" />
+          <input id="qCidadeUF" placeholder="Cidade/UF" />
+          <input id="qCEP" placeholder="CEP (ex.: 79805-031)" />
+          <input id="qExpedicao" placeholder="Data expedição RG/CNH (ex.: 12/09/2022)" />
+        </div>
+        <div class="row">
+          <button id="btnQualificar">Gerar parágrafo</button>
+          <button id="btnCopyQualif">Copiar</button>
+        </div>
+        <textarea id="qualifSaida" placeholder="Parágrafo gerado..." readonly></textarea>
+      </div>
+
+      <!-- Linha 3: Prazos (dias úteis) -->
+      <div style="margin-top:12px">
+        <div class="small right muted">Cálculo de prazo em dias úteis (ignora sáb/dom + feriados informados)</div>
+        <div class="col-2">
+          <input id="pDataIni" type="date" />
+          <input id="pDias" type="number" min="0" placeholder="Qtd dias úteis" />
+        </div>
+        <input id="pFeriados" type="text" placeholder="Feriados (YYYY-MM-DD, separados por vírgula) — ex.: 2025-11-02,2025-11-15" />
+        <div class="row">
+          <button id="btnPrazo">Calcular prazo</button>
+          <button id="btnCopyPrazo">Copiar</button>
+        </div>
+        <textarea id="prazoSaida" placeholder="Data final e contagem..." readonly></textarea>
+      </div>
+
+      <!-- Linha 4: Modelos rápidos -->
+      <div style="margin-top:12px">
+        <div class="small right muted">Modelos rápidos (WhatsApp/E-mail)</div>
+        <div class="col-2">
+          <select id="modeloTipo">
+            <option value="docs">Solicitação de documentos</option>
+            <option value="cobranca">Cobrança com PIX (preferir QR do boleto)</option>
+            <option value="matriculaOnr">Solicitação de matrícula ONR</option>
+            <option value="cndIptu">CND/IPTU positiva — orientação</option>
+          </select>
+          <input id="modeloNome" placeholder="Nome do destinatário (opcional)" />
+        </div>
+        <div class="row">
+          <button id="btnModelo">Gerar texto</button>
+          <button id="btnCopyModelo">Copiar</button>
+        </div>
+        <textarea id="modeloSaida" placeholder="Texto gerado..." readonly></textarea>
+        <p class="muted small">Obs.: Fecha sempre com “Atenciosamente, Cartório Vila São Pedro | Dourados-MS 🚀”.</p>
+      </div>
+    </div>
+    <!-- =================== FIM FERRAMENTAS DE CARTÓRIO =================== -->
   </section>
 
 <script>
@@ -243,8 +325,7 @@
     elTZ.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
     autoTheme();
   }
-  setInterval(atualizarRelogio, 1000);
-  atualizarRelogio();
+  setInterval(atualizarRelogio, 1000); atualizarRelogio();
 
   btnCopiar.onclick = async () => {
     try{
@@ -448,6 +529,222 @@
   const quoteEl = document.getElementById('quote');
   function newQuote(){ quoteEl.textContent = quotes[Math.floor(Math.random()*quotes.length)]; }
   document.getElementById('newQuote').onclick = newQuote; newQuote();
+
+  // =================== FERRAMENTAS DE CARTÓRIO (JS) ===================
+
+  // --- Valor por extenso (R$) ---
+  function parseCurrencyBRL(str){
+    if(!str) return NaN;
+    str = str.replace(/\s/g,'').replace(/\./g,'').replace(',', '.');
+    return Number(str);
+  }
+  const UN = ["","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze","treze","quatorze","quinze","dezesseis","dezessete","dezoito","dezenove"];
+  const DEZ = ["","dez","vinte","trinta","quarenta","cinquenta","sessenta","setenta","oitenta","noventa"];
+  const CEN = ["","cento","duzentos","trezentos","quatrocentos","quinhentos","seiscentos","setecentos","oitocentos","novecentos"];
+  function extensoAte999(n){
+    if(n===0) return "";
+    if(n===100) return "cem";
+    const c = Math.floor(n/100), d = Math.floor((n%100)/10), u = n%10, dez = n%100;
+    let out=[];
+    if(c) out.push(CEN[c]);
+    if(dez){
+      if(dez<20) out.push(UN[dez]);
+      else{
+        out.push(DEZ[d] + (u? " e "+UN[u]:""));
+      }
+    }
+    return out.join(" e ");
+  }
+  function grupoNome(i, val){
+    const sing = ["", "mil", "milhão", "bilhão", "trilhão"];
+    const plur = ["", "mil", "milhões", "bilhões", "trilhões"];
+    if(i===0) return "";
+    return (val===1 ? sing[i] : plur[i]);
+  }
+  function numeroPorExtenso(n){
+    if(n===0) return "zero";
+    let partes=[]; let i=0;
+    while(n>0){
+      const g = n%1000;
+      if(g){
+        const texto = extensoAte999(g);
+        const nome = grupoNome(i, g);
+        let bloco = texto + (nome? " " + nome:"");
+        partes.unshift(bloco);
+      }
+      n = Math.floor(n/1000); i++;
+    }
+    return partes.join(" ");
+  }
+  function moedaPorExtenso(valor){
+    const inteiro = Math.floor(valor);
+    const cent = Math.round((valor - inteiro)*100);
+    let out=[];
+    if(inteiro>0){
+      const n = numeroPorExtenso(inteiro);
+      out.push(n + " " + (inteiro===1? "real":"reais"));
+    }
+    if(cent>0){
+      const c = numeroPorExtenso(cent);
+      out.push(c + " " + (cent===1? "centavo":"centavos"));
+    }
+    return out.length? out.join(" e ") : "zero real";
+  }
+  const btnExtenso = document.getElementById('btnExtenso');
+  const btnCopyExtenso = document.getElementById('btnCopyExtenso');
+  btnExtenso.onclick = ()=>{
+    const v = parseCurrencyBRL(document.getElementById('extensoValor').value);
+    if(isNaN(v)){ alert('Informe um valor no formato brasileiro (ex.: 4.637,13)'); return; }
+    document.getElementById('extensoSaida').value = moedaPorExtenso(v).replace(/\b\w/g, c=>c.toUpperCase());
+  };
+  btnCopyExtenso.onclick = async ()=> {
+    await navigator.clipboard.writeText(document.getElementById('extensoSaida').value||'');
+  };
+
+  // --- CPF/CNPJ: validar e formatar ---
+  function onlyDigits(s){ return (s||"").replace(/\D+/g,''); }
+  function cpfValido(cpf){
+    cpf = onlyDigits(cpf);
+    if(cpf.length!==11 || /^(\d)\1+$/.test(cpf)) return false;
+    let soma=0; for(let i=0;i<9;i++) soma+= parseInt(cpf[i])*(10-i);
+    let d1 = (soma*10)%11; if(d1===10) d1=0;
+    if(d1!=cpf[9]) return false;
+    soma=0; for(let i=0;i<10;i++) soma+= parseInt(cpf[i])*(11-i);
+    let d2=(soma*10)%11; if(d2===10) d2=0;
+    return d2==cpf[10];
+  }
+  function cnpjValido(cnpj){
+    cnpj = onlyDigits(cnpj);
+    if(cnpj.length!==14 || /^(\d)\1+$/.test(cnpj)) return false;
+    const pesos1=[5,4,3,2,9,8,7,6,5,4,3,2], pesos2=[6,5,4,3,2,9,8,7,6,5,4,3,2];
+    let soma=0; for(let i=0;i<12;i++) soma+= parseInt(cnpj[i])*pesos1[i];
+    let d1 = soma%11; d1 = d1<2?0:11-d1;
+    soma=0; for(let i=0;i<13;i++) soma+= parseInt(cnpj[i])*pesos2[i];
+    let d2 = soma%11; d2 = d2<2?0:11-d2;
+    return d1==cnpj[12] && d2==cnpj[13];
+  }
+  function maskCPF(cpf){
+    cpf = onlyDigits(cpf).padStart(11,'0').slice(-11);
+    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+  }
+  function maskCNPJ(cnpj){
+    cnpj = onlyDigits(cnpj).padStart(14,'0').slice(-14);
+    return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,'$1.$2.$3/$4-$5');
+  }
+  const btnValidarDoc = document.getElementById('btnValidarDoc');
+  const btnMaskDoc = document.getElementById('btnMaskDoc');
+  const btnCopyDoc = document.getElementById('btnCopyDoc');
+  btnValidarDoc.onclick = ()=>{
+    const raw = document.getElementById('docNumero').value;
+    const d = onlyDigits(raw);
+    if(!d){ alert('Informe um CPF ou CNPJ.'); return; }
+    let valido=false, formatado="";
+    if(d.length<=11){ valido = cpfValido(d); formatado = maskCPF(d); }
+    else{ valido = cnpjValido(d); formatado = maskCNPJ(d); }
+    document.getElementById('docSaida').value = `${formatado} — ${valido? "VÁLIDO ✅":"INVÁLIDO ❌"}`;
+  };
+  btnMaskDoc.onclick = ()=>{
+    const d = onlyDigits(document.getElementById('docNumero').value);
+    if(!d){ alert('Informe um CPF ou CNPJ.'); return; }
+    document.getElementById('docSaida').value = (d.length<=11) ? maskCPF(d) : maskCNPJ(d);
+  };
+  btnCopyDoc.onclick = async ()=> {
+    await navigator.clipboard.writeText(document.getElementById('docSaida').value||'');
+  };
+
+  // --- Qualificação rápida ---
+  function qualificar(){
+    const nome = (document.getElementById('qNome').value||'').trim();
+    const cnh = (document.getElementById('qCNH').value||'').trim();
+    const rg = (document.getElementById('qRG').value||'').trim();
+    const cpf = onlyDigits(document.getElementById('qCPF').value||'');
+    const end = (document.getElementById('qEndereco').value||'').trim();
+    const ciduf = (document.getElementById('qCidadeUF').value||'').trim();
+    const cep = (document.getElementById('qCEP').value||'').trim();
+    const exp = (document.getElementById('qExpedicao').value||'').trim();
+
+    if(!nome || !rg || !cpf || !end || !ciduf || !cep){
+      alert('Preencha ao menos: Nome, RG, CPF, Endereço, Cidade/UF e CEP.');
+      return;
+    }
+    const cpfFmt = maskCPF(cpf);
+    let partes = [];
+    partes.push(`${nome}, portador${nome.endsWith('a')?'a':''} ${cnh?`da CNH n° ${cnh}, `:''}na qual consta a Cédula de Identidade RG nº ${rg}, inscrito no CPF/MF nº ${cpfFmt}${exp?`, expedido em ${exp}`:''}, residente e domiciliad${nome.endsWith('a')?'a':'o'} na ${end}, ${ciduf}, CEP ${cep}.`);
+    document.getElementById('qualifSaida').value = partes.join(' ');
+  }
+  document.getElementById('btnQualificar').onclick = qualificar;
+  document.getElementById('btnCopyQualif').onclick = async ()=> {
+    await navigator.clipboard.writeText(document.getElementById('qualifSaida').value||'');
+  };
+
+  // --- Prazo em dias úteis ---
+  function parseHolidayList(str){
+    return (str||"").split(',').map(s=>s.trim()).filter(Boolean)
+      .map(s=> new Date(s+'T00:00:00'));
+  }
+  function isSameDate(a,b){ return a.getFullYear()==b.getFullYear() && a.getMonth()==b.getMonth() && a.getDate()==b.getDate(); }
+  function addBusinessDays(start, days, holidays){
+    const d = new Date(start.getTime()); let count=0;
+    while(count < days){
+      d.setDate(d.getDate()+1);
+      const wd = d.getDay(); // 0 dom .. 6 sab
+      const feriado = holidays.some(h=> isSameDate(h,d));
+      if(wd!==0 && wd!==6 && !feriado) count++;
+    }
+    return d;
+  }
+  function businessDaysBetween(start,end,holidays){
+    // conta úteis exclusivos da data inicial, inclusivos na final se útil
+    let d = new Date(start.getTime()); let c=0;
+    while(d < end){
+      d.setDate(d.getDate()+1);
+      const wd = d.getDay();
+      const feriado = holidays.some(h=> isSameDate(h,d));
+      if(wd!==0 && wd!==6 && !feriado) c++;
+    }
+    return c;
+  }
+  const btnPrazo = document.getElementById('btnPrazo');
+  const btnCopyPrazo = document.getElementById('btnCopyPrazo');
+  btnPrazo.onclick = ()=>{
+    const di = document.getElementById('pDataIni').value;
+    const qtd = parseInt(document.getElementById('pDias').value||'0',10);
+    if(!di || isNaN(qtd)){ alert('Informe data inicial e quantidade de dias úteis.'); return; }
+    const fer = parseHolidayList(document.getElementById('pFeriados').value);
+    const ini = new Date(di+'T00:00:00');
+    const fim = addBusinessDays(ini, qtd, fer);
+    const uteis = businessDaysBetween(ini, fim, fer);
+    document.getElementById('prazoSaida').value = `Início: ${ini.toLocaleDateString()} | Prazo: ${qtd} dias úteis | Término: ${fim.toLocaleDateString()} | Úteis contados: ${uteis}`;
+  };
+  btnCopyPrazo.onclick = async ()=> {
+    await navigator.clipboard.writeText(document.getElementById('prazoSaida').value||'');
+  };
+
+  // --- Modelos rápidos (com preferências do cartório) ---
+  function modeloTexto(tipo, nome){
+    const saud = nome? `Olá, ${nome}!` : `Olá, tudo bem?`;
+    const fechamento = "Atenciosamente, Cartório Vila São Pedro | Dourados-MS 🚀";
+    const lembretePix = "Obs.: Pagamento **preferencialmente via PIX pelo QR Code do boleto**.";
+    if(tipo==='docs'){
+      return `${saud}\n\nPara darmos andamento, pedimos a gentileza de nos enviar a documentação atualizada (certidão simplificada em até 30 dias, contrato/alteração vigente e documento do sócio administrador, quando houver).\n\n${lembretePix}\n\n${fechamento}`;
+    }
+    if(tipo==='cobranca'){
+      return `${saud}\n\nSegue cobrança referente ao serviço solicitado. ${lembretePix}\n\nChave PIX (exemplo): financeiro@cartoriodourados.com\n\nApós o pagamento, por favor envie o comprovante para agilizarmos o processo.\n\n${fechamento}`;
+    }
+    if(tipo==='matriculaOnr'){
+      return `${saud}\n\nSolicitaremos a matrícula atualizada pela ONR, com pagamento via PIX imediato. Caso prefira, podemos contatar o cliente para que ele mesmo realize o pagamento.\n\n${lembretePix}\n\n${fechamento}`;
+    }
+    // cnd iptu
+    return `${saud}\n\nA CND/IPTU do imóvel consta **positiva**. Isso pode ocorrer por débitos em aberto, parcelas vencidas ou atualização pendente no sistema municipal. Para prosseguirmos com a lavratura, é necessário regularizar a pendência e nos encaminhar a certidão negativa/positiva com efeito de negativa.\n\n${fechamento}`;
+  }
+  document.getElementById('btnModelo').onclick = ()=>{
+    const tipo = document.getElementById('modeloTipo').value;
+    const nome = document.getElementById('modeloNome').value.trim();
+    document.getElementById('modeloSaida').value = modeloTexto(tipo, nome);
+  };
+  document.getElementById('btnCopyModelo').onclick = async ()=> {
+    await navigator.clipboard.writeText(document.getElementById('modeloSaida').value||'');
+  };
 </script>
 </body>
 </html>
