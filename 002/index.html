@@ -5,212 +5,99 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Painel Interativo — Cartório Vila São Pedro</title>
   <style>
-    /* ==========================
-       RESET + TOKENS
-    ========================== */
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;background:#0a0a0a;color:#fff}
-    :root{
-      --bg-a:#0b0b10; /* base */
-      --bg-b:#000000; /* base */
-      --glass:rgba(255,255,255,.06);
-      --stroke:rgba(255,255,255,.16);
-      --text-dim:rgba(255,255,255,.75);
-      --brand: #7dd3fc; /* azul suave */
-      --brand-2:#a78bfa; /* lilás */
-      --radius:20px;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-      --ring: 0 0 0 2px rgba(255,255,255,.15) inset, 0 0 0 1px rgba(255,255,255,.08);
-    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,sans-serif;background:#0a0a0a;color:#fff;overflow-x:hidden}
+    :root{--stroke:rgba(255,255,255,.12);--glass:rgba(255,255,255,.08);--brand:#7dd3fc;--radius:16px;--shadow:0 4px 30px rgba(0,0,0,.35)}
 
-    /* ==========================
-       CENA: FUNDO ANIMADO
-    ========================== */
-    .scene{
-      min-height:100dvh;position:relative;overflow:hidden;
-      background: radial-gradient(1200px 800px at 10% 10%,rgba(125,211,252,.12),transparent 60%),
-                  radial-gradient(900px 600px at 90% 20%,rgba(167,139,250,.12),transparent 60%),
-                  linear-gradient(135deg,var(--bg-a),var(--bg-b));
-      isolation:isolate;
-    }
+    .scene{min-height:100vh;position:relative;overflow:hidden;background:linear-gradient(135deg,#0f172a,#000);}
 
-    /* Grade sutil (papel milimetrado) */
-    .grid::before{
-      content:"";position:absolute;inset:0;z-index:-2;opacity:.25;
-      background-image:linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
-                       linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
-      background-size:24px 24px;
-      mask-image: radial-gradient(ellipse at center, #000 35%, transparent 75%);
-      animation: pan 14s linear infinite;
-    }
-    @keyframes pan{to{background-position:24px 24px}}
+    .blob{position:absolute;filter:blur(40px);opacity:.7;mix-blend-mode:screen;animation:float 20s ease-in-out infinite}
+    .blob:nth-child(1){width:320px;height:320px;left:10%;top:10%;background:radial-gradient(circle,#60a5fa,#34d399)}
+    .blob:nth-child(2){width:400px;height:400px;left:70%;top:20%;background:radial-gradient(circle,#a78bfa,#f472b6);animation-duration:25s}
+    .blob:nth-child(3){width:420px;height:420px;left:30%;top:60%;background:radial-gradient(circle,#22d3ee,#fbbf24);animation-duration:28s}
+    @keyframes float{0%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(20px,-20px) rotate(180deg)}100%{transform:translate(0,0) rotate(360deg)}}
 
-    /* Bolhas flutuantes coloridas */
-    .blob{position:absolute;inset:auto;filter:saturate(120%) blur(30px);mix-blend-mode:screen;opacity:.7;z-index:-1}
-    .blob:nth-child(1){width:340px;height:340px;left:10%;top:12%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 60%),linear-gradient(135deg,#60a5fa,#34d399);animation:float 22s ease-in-out infinite}
-    .blob:nth-child(2){width:420px;height:420px;left:60%;top:6%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 60%),linear-gradient(135deg,#a78bfa,#f472b6);animation:float 24s ease-in-out infinite reverse}
-    .blob:nth-child(3){width:360px;height:360px;left:20%;top:70%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 60%),linear-gradient(135deg,#22d3ee,#fbbf24);animation:float 26s ease-in-out infinite}
-    .blob:nth-child(4){width:480px;height:480px;left:72%;top:65%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 60%),linear-gradient(135deg,#f59e0b,#ef4444);animation:float 28s ease-in-out infinite reverse}
-    @keyframes float{
-      0%{transform:translate(-20px,10px) rotate(0deg)}
-      50%{transform:translate(20px,-10px) rotate(160deg)}
-      100%{transform:translate(-20px,10px) rotate(360deg)}
-    }
+    header{position:sticky;top:0;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);border-bottom:1px solid var(--stroke);display:flex;justify-content:space-between;align-items:center;padding:14px 24px;z-index:10}
+    .title{font-weight:600;font-size:16px}
+    .btn{border:1px solid var(--stroke);background:var(--glass);padding:8px 14px;border-radius:12px;color:#fff;cursor:pointer;transition:.2s}
+    .btn:hover{background:rgba(255,255,255,.12)}
 
-    /* ==========================
-       LAYOUT (HEADER, MAIN, FOOTER)
-    ========================== */
-    .container{max-width:1100px;margin-inline:auto;padding:24px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;padding:24px;max-width:1100px;margin:auto;position:relative;z-index:1}
+    .card{border:1px solid var(--stroke);background:var(--glass);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:.3s}
+    .card:hover{transform:translateY(-3px);}
+    .card h3{margin-bottom:8px}
+    .card p{color:rgba(255,255,255,.75);font-size:14px;margin-bottom:12px}
 
-    .header{position:sticky;top:0;backdrop-filter:blur(12px);background:linear-gradient(to bottom,rgba(0,0,0,.5),rgba(0,0,0,.2));border-bottom:1px solid var(--stroke);z-index:10}
-    .head-wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--glass);box-shadow:var(--ring)}
-    .title{font-size:16px;font-weight:600;letter-spacing:.2px}
-    .subtitle{margin-top:2px;color:var(--text-dim);font-size:12px}
+    .pill{background:var(--glass);border:1px solid var(--stroke);padding:8px 12px;border-radius:12px;font-size:13px;cursor:pointer;transition:.2s}
+    .pill:hover{background:rgba(255,255,255,.12)}
 
-    .controls{display:flex;align-items:center;gap:10px}
-    .btn{appearance:none;border:1px solid var(--stroke);background:var(--glass);color:#fff;padding:10px 14px;border-radius:14px;cursor:pointer;box-shadow:var(--shadow);transition:.25s ease}
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.09)}
+    footer{position:sticky;bottom:0;margin:20px auto;display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(0,0,0,.5);border:1px solid var(--stroke);backdrop-filter:blur(10px);border-radius:16px;padding:8px 16px;max-width:1100px}
+    .clock{font-size:13px;color:rgba(255,255,255,.75)}
 
-    /* Toggle CSS-only (Modo Festa) */
-    .switch{--w:46px;--h:26px;position:relative;display:inline-block;width:var(--w);height:var(--h)}
-    .switch input{display:none}
-    .slider{position:absolute;inset:0;background:#222;border:1px solid var(--stroke);border-radius:999px;transition:.25s}
-    .slider::before{content:"";position:absolute;height:20px;width:20px;left:3px;top:2px;background:linear-gradient(180deg,#fff,#d1d5db);border-radius:50%;box-shadow:0 6px 12px rgba(0,0,0,.35);transition:.25s}
-    .switch input:checked + .slider{background:linear-gradient(90deg,#1e293b,#334155)}
-    .switch input:checked + .slider::before{transform:translateX(20px);background:linear-gradient(180deg,#e879f9,#60a5fa)}
+    /* NOVAS SEÇÕES */
+    .shortcuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;padding:20px 24px;max-width:1000px;margin:0 auto}
+    .key{background:rgba(255,255,255,.07);border:1px solid var(--stroke);border-radius:10px;padding:12px;text-align:center;font-size:14px;cursor:pointer;transition:.15s}
+    .key:active{transform:scale(.95);background:rgba(255,255,255,.15)}
 
-    /* Área hero/intro */
-    .intro{margin:18px auto 22px;border:1px solid var(--stroke);background:var(--glass);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
-    .intro p{margin:0;color:var(--text-dim);font-size:14px;line-height:1.5}
+    .notes{max-width:700px;margin:40px auto;border:1px solid var(--stroke);border-radius:var(--radius);background:rgba(255,255,255,.05);padding:16px 20px}
+    .notes h4{margin-bottom:10px}
+    .note-item{background:rgba(255,255,255,.08);border-radius:8px;padding:10px;margin-bottom:8px;font-size:14px}
 
-    /* Cards base */
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
-    .card{grid-column:span 12;border:1px solid var(--stroke);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.04));border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
-    .card::after{content:"";position:absolute;right:-60px;top:-60px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.15),transparent 60%);filter:blur(8px);opacity:.8;transition:transform .5s ease,opacity .5s ease}
-    .card:hover::after{transform:translateY(8px);opacity:1}
-    .card h3{margin:0 0 8px;font-size:16px}
-    .card p{margin:0 0 14px;color:var(--text-dim);font-size:14px}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    .pill{border:1px solid var(--stroke);background:var(--glass);padding:10px 12px;border-radius:14px;font-size:13px;cursor:pointer;transition:.2s}
-    .pill:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
-
-    /* Responsivo */
-    @media (min-width:700px){
-      .card{grid-column:span 4}
-    }
-
-    /* Rodapé vivo (apenas efeitos visuais, sem JS) */
-    .footer-wrap{position:sticky;bottom:16px;margin:20px auto 0;display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--stroke);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);border-radius:16px;padding:10px 14px;box-shadow:var(--shadow)}
-    .badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--stroke);background:var(--glass);padding:6px 10px;border-radius:999px;font-size:12px}
-    .clock{font-variant-numeric:tabular-nums;font-size:13px;color:var(--text-dim)}
-    .tick::after{content:"·";animation:blink 1s step-start infinite}
-    @keyframes blink{50%{opacity:0}}
-
-    /* ==========================
-       MODO FESTA (CSS-only)
-       – quando o checkbox #party está marcado, aplicamos estilos no .scene via :has
-    ========================== */
-    .scene:has(#party:checked) .blob{filter:saturate(140%) blur(24px);opacity:.9}
-    .scene:has(#party:checked) .card{outline:2px solid rgba(255,255,255,.06)}
-    .scene:has(#party:checked) .pill{background:linear-gradient(90deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border-color:rgba(255,255,255,.2)}
-    .scene:has(#party:checked) .footer-wrap{box-shadow:0 0 0 1px rgba(255,255,255,.12) inset, var(--shadow)}
-
-    /* Brilhos orbitais extra no modo festa */
-    .party-orbits{position:absolute;inset:0;pointer-events:none;opacity:0;transition:.4s}
-    .scene:has(#party:checked) .party-orbits{opacity:.8}
-    .orbit{position:absolute;border-radius:50%;border:1px dashed rgba(255,255,255,.15);animation:spin 20s linear infinite}
-    .orbit.a{width:55vmin;height:55vmin;left:8%;top:18%}
-    .orbit.b{width:70vmin;height:70vmin;right:6%;top:10%;animation-duration:26s}
-    .dot{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,#fff,rgba(255,255,255,.1));box-shadow:0 0 24px rgba(255,255,255,.35)}
-    .dot{top:-5px;left:50%;transform:translateX(-50%)}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .pix{max-width:400px;margin:40px auto;border:1px solid var(--stroke);border-radius:var(--radius);background:rgba(255,255,255,.05);padding:20px;text-align:center}
+    .pix img{width:160px;margin:10px auto;display:block;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}
   </style>
 </head>
 <body>
-  <div class="scene grid">
-    <!-- Bolhas de fundo -->
-    <div class="blob"></div>
+  <div class="scene">
     <div class="blob"></div>
     <div class="blob"></div>
     <div class="blob"></div>
 
-    <!-- Header -->
-    <header class="header">
-      <div class="head-wrap container">
-        <div class="brand">
-          <div class="logo">🔏</div>
-          <div>
-            <div class="title">Cartório Vila São Pedro — Playground</div>
-            <div class="subtitle">HTML + CSS puro, com animações suaves 🚀</div>
-          </div>
-        </div>
-        <div class="controls">
-          <label class="switch" title="Modo Festa">
-            <input id="party" type="checkbox" />
-            <span class="slider"></span>
-          </label>
-          <button class="btn" type="button">Preferências</button>
-        </div>
-      </div>
+    <header>
+      <div class="title">Cartório Vila São Pedro — Painel Interativo</div>
+      <button class="btn">⚙ Preferências</button>
     </header>
 
-    <!-- Orbits que aparecem só no modo festa (controlado via :has) -->
-    <div aria-hidden="true" class="party-orbits">
-      <div class="orbit a"><span class="dot"></span></div>
-      <div class="orbit b"><span class="dot"></span></div>
-    </div>
-
-    <!-- Intro -->
-    <main class="container" style="position:relative;z-index:1">
-      <section class="intro">
-        <p>
-          Bem-vindo(a) ao playground visual do Cartório. Esta é a <strong>Parte 1</strong>:
-          fundo animado, cabeçalho, cards-base e rodapé vivo — tudo em HTML/CSS, sem frameworks.
-          Nas próximas partes, adicionaremos widgets práticos (agendamentos, lembretes, modelos e atalhos) mantendo fluidez ✨
-        </p>
-      </section>
-
-      <!-- Cards base -->
+    <main>
       <section class="grid">
-        <article class="card">
-          <h3>Agendamentos Express</h3>
-          <p>Crie blocos de horários com arrastar/soltar (será adicionado na Parte 2).</p>
-          <div class="actions">
-            <button class="pill" type="button">Pré‑configurar</button>
-            <button class="pill" type="button">Detalhes</button>
-          </div>
-        </article>
-        <article class="card">
-          <h3>Minutas & Modelos</h3>
-          <p>Copie textos de e‑mails e cláusulas em um clique (Parte 3).</p>
-          <div class="actions">
-            <button class="pill" type="button">Explorar</button>
-            <button class="pill" type="button">Coleção</button>
-          </div>
-        </article>
-        <article class="card">
-          <h3>Sistemas & Selos</h3>
-          <p>Atalhos para ONR, CRC, e‑Notariado, CENSEC e mais (Parte 4).</p>
-          <div class="actions">
-            <button class="pill" type="button">Conectar</button>
-            <button class="pill" type="button">Preferidos</button>
-          </div>
-        </article>
+        <div class="card"><h3>Agendamentos Express</h3><p>Crie blocos de horários arrastáveis (em breve).</p><button class="pill">Pré-configurar</button></div>
+        <div class="card"><h3>Minutas & Modelos</h3><p>Copie textos de e-mails e cláusulas em um clique.</p><button class="pill">Explorar</button></div>
+        <div class="card"><h3>Sistemas & Selos</h3><p>Atalhos para ONR, CRC, e-Notariado e mais.</p><button class="pill">Conectar</button></div>
       </section>
 
-      <div style="height:80px"></div>
+      <!-- Atalhos visuais -->
+      <section>
+        <h3 style="text-align:center;margin-bottom:10px;font-weight:500">Atalhos rápidos ⚡</h3>
+        <div class="shortcuts">
+          <div class="key">Ctrl + N<br><small>Nova minuta</small></div>
+          <div class="key">Ctrl + P<br><small>Emitir selo</small></div>
+          <div class="key">Ctrl + L<br><small>Listar registros</small></div>
+          <div class="key">Ctrl + R<br><small>Recarregar</small></div>
+          <div class="key">Alt + M<br><small>Menu rápido</small></div>
+          <div class="key">Alt + C<br><small>Cobrança PIX</small></div>
+        </div>
+      </section>
+
+      <!-- Bloco de notas -->
+      <section class="notes">
+        <h4>🗒️ Lembretes do dia</h4>
+        <div class="note-item">✔ Conferir certidão do Sr. Jerônimo</div>
+        <div class="note-item">⚠ Atualizar matrícula após averbação</div>
+        <div class="note-item">💡 Revisar minuta da procuração coletiva</div>
+      </section>
+
+      <!-- Cartão PIX -->
+      <section class="pix">
+        <h4>💰 Pagamento via PIX</h4>
+        <p>Preferencialmente pelo QR Code abaixo:</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?data=financeiro@cartoriodourados.com&size=160x160" alt="QR PIX" />
+        <p style="font-size:13px;color:rgba(255,255,255,.7)">financeiro@cartoriodourados.com</p>
+      </section>
     </main>
 
-    <!-- Footer (vivo visualmente) -->
-    <footer class="container" style="position:relative;z-index:1">
-      <div class="footer-wrap">
-        <span class="badge">🔔 Notificações <span style="margin-left:6px;opacity:.8">3</span></span>
-        <span class="clock">Relógio <span class="tick"></span> 09:00</span>
-      </div>
-      <div style="height:18px"></div>
+    <footer>
+      <span>🔔 3 novas notificações</span>
+      <span class="clock">🕒 09:00</span>
     </footer>
   </div>
 </body>
