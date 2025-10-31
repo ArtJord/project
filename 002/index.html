@@ -103,12 +103,12 @@
     }
     setInterval(tick,1000);tick();
 
-    // modo festa
+  
     document.getElementById('partyBtn').addEventListener('click',()=>{
       document.getElementById('scene').classList.toggle('party');
     });
 
-    // lembrete
+  
     const box = document.getElementById('reminderBox');
     document.getElementById('reminderBtn').onclick = ()=> box.style.display = box.style.display==='block'?'none':'block';
     document.getElementById('addReminder').onclick = ()=>{
